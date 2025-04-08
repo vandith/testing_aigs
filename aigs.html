@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Multi-Page Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .form-page {
+            display: none;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .form-page.active {
+            display: block;
+        }
+        
+        .form-control {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], 
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #3367d6;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .back-btn {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .progress-step {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin: 0 5px;
+        }
+        
+        .progress-step.active {
+            background-color: #4285f4;
+        }
+        
+        .random-question {
+            background-color: #e8f4fe;
+            padding: 10px;
+            border-left: 4px solid #4285f4;
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .error-message {
+            display: none;
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading:after {
+            content: " ";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 0 0 10px;
+            border-radius: 50%;
+            border: 3px solid #4285f4;
+            border-color: #4285f4 transparent #4285f4 transparent;
+            animation: loading 1.2s linear infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Form</h1>
+    
+    <div class="progress-indicator">
+        <div class="progress-step active" data-page="1"></div>
+        <div class="progress-step" data-page="2"></div>
+        <div class="progress-step" data-page="3"></div>
+    </div>
+    
+    <form id="multi-page-form">
+        <!-- Page 1 -->
+        <div id="page1" class="form-page active">
+            <h2>Personal Information</h2>
+            
+            <div class="form-control">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-control">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-control">
+                <label for="age">Age</label>
+                <input type="text" id="age" name="age" required>
+            </div>
+            
+            <div class="navigation">
+                <div></div> <!-- Empty div for flex spacing -->
+                <button type="button" id="next1" class="next-btn">Next</button>
+            </div>
+        </div>
+        
+        <!-- Page 2 -->
+        <div id="page2" class="form-page">
+            <h2>Additional Information</h2>
+            
+            <div class="form-control">
+                <label for="occupation">Occupation</label>
+                <input type="text" id="occupation" name="occupation" required>
+            </div>
+            
+            <div class="form-control">
+                <label for="interests">Interests</label>
+                <textarea id="interests" name="interests" rows="4" required></textarea>
+            </div>
+            
+            <div class="form-control">
+                <label for="experience">Years of Experience</label>
+                <select id="experience" name="experience" required>
+                    <option value="">Select an option</option>
+                    <option value="0-1">Less than 1 year</option>
+                    <option value="1-3">1-3 years</option>
+                    <option value="3-5">3-5 years</option>
+                    <option value="5+">More than 5 years</option>
+                </select>
+            </div>
+            
+            <div class="navigation">
+                <button type="button" id="back1" class="back-btn">Back</button>
+                <button type="button" id="next2" class="next-btn">Next</button>
+            </div>
+        </div>
+        
+        <!-- Page 3 with Random Questions -->
+        <div id="page3" class="form-page">
+            <h2>Final Questions</h2>
+            <p>Please answer these two randomly selected questions:</p>
+            
+            <div id="random-questions-container">
+                <!-- Random questions will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="navigation">
+                <button type="button" id="back2" class="back-btn">Back</button>
+                <button type="submit" id="submit-btn">Submit</button>
+            </div>
+        </div>
+    </form>
+    
+    <div id="success-message" class="success-message">
+        Thank you! Your response has been recorded successfully.
+    </div>
+    
+    <div id="error-message" class="error-message">
+        Sorry, there was an error submitting your form. Please try again.
+    </div>
+    
+    <div id="loading" class="loading">
+        Submitting your response...
+    </div>
+    
+    <!-- Google Sheets API Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        // Sample pool of questions to randomly select from
+        const questionPool = [
+            {
+                id: "q1",
+                text: "What challenges are you currently facing in your field?",
+                type: "textarea"
+            },
+            {
+                id: "q2",
+                text: "How did you hear about our company?",
+                type: "text"
+            },
+            {
+                id: "q3",
+                text: "What are your career goals for the next 5 years?",
+                type: "textarea"
+            },
+            {
+                id: "q4",
+                text: "Rate your problem-solving skills from 1-10:",
+                type: "select",
+                options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            },
+            {
+                id: "q5",
+                text: "What motivates you the most in a workplace?",
+                type: "text"
+            },
+            {
+                id: "q6",
+                text: "Describe a situation where you demonstrated leadership:",
+                type: "textarea"
+            },
+            {
+                id: "q7",
+                text: "What skills would you like to develop further?",
+                type: "text"
+            },
+            {
+                id: "q8",
+                text: "How do you prefer to receive feedback?",
+                type: "select",
+                options: ["Written", "Verbal", "Both", "Depends on the situation"]
+            }
+        ];
+        
+        // DOM elements
+        const form = document.getElementById('multi-page-form');
+        const pages = document.querySelectorAll('.form-page');
+        const progressSteps = document.querySelectorAll('.progress-step');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const loadingIndicator = document.getElementById('loading');
+        
+        // Google Sheets API configuration
+        // REPLACE THESE VALUES WITH YOUR OWN
+        const GOOGLE_SHEETS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbynA5pyio3Xf1aSYxUqePO57P_mTNg29qQ_R9vNIYVmcxIhKUePgEM9wzqS5-0YbVDbDQ/exec';
+        
+        // Track selected random questions
+        let selectedRandomQuestions = [];
+        
+        // Navigation buttons
+        document.getElementById('next1').addEventListener('click', () => {
+            if (validatePage(0)) {
+                goToPage(1);
+            }
+        });
+        
+        document.getElementById('back1').addEventListener('click', () => {
+            goToPage(0);
+        });
+        
+        document.getElementById('next2').addEventListener('click', () => {
+            if (validatePage(1)) {
+                goToPage(2);
+                generateRandomQuestions();
+            }
+        });
+        
+        document.getElementById('back2').addEventListener('click', () => {
+            goToPage(1);
+        });
+        
+        // Function to validate input fields on a page
+        function validatePage(pageIndex) {
+            const currentPage = pages[pageIndex];
+            const requiredFields = currentPage.querySelectorAll('[required]');
+            
+            let valid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = 'red';
+                    valid = false;
+                } else {
+                    field.style.borderColor = '#ddd';
+                }
+            });
+            
+            return valid;
+        }
+        
+        // Function to navigate between pages
+        function goToPage(pageIndex) {
+            pages.forEach((page, index) => {
+                page.classList.remove('active');
+                progressSteps[index].classList.remove('active');
+            });
+            
+            pages[pageIndex].classList.add('active');
+            progressSteps[pageIndex].classList.add('active');
+        }
+        
+        // Function to generate random questions
+        function generateRandomQuestions() {
+            // Shuffle and select 2 random questions
+            const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            selectedRandomQuestions = shuffled.slice(0, 2);
+            
+            const container = document.getElementById('random-questions-container');
+            container.innerHTML = '';
+            
+            selectedRandomQuestions.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'form-control random-question';
+                
+                const label = document.createElement('label');
+                label.htmlFor = question.id;
+                label.textContent = question.text;
+                questionDiv.appendChild(label);
+                
+                let inputElement;
+                
+                if (question.type === 'textarea') {
+                    inputElement = document.createElement('textarea');
+                    inputElement.rows = 4;
+                } else if (question.type === 'select') {
+                    inputElement = document.createElement('select');
+                    
+                    // Add default empty option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select an option';
+                    inputElement.appendChild(defaultOption);
+                    
+                    // Add other options
+                    question.options.forEach(optionValue => {
+                        const option = document.createElement('option');
+                        option.value = optionValue;
+                        option.textContent = optionValue;
+                        inputElement.appendChild(option);
+                    });
+                } else {
+                    inputElement = document.createElement('input');
+                    inputElement.type = question.type;
+                }
+                
+                inputElement.id = question.id;
+                inputElement.name = question.id;
+                inputElement.required = true;
+                
+                questionDiv.appendChild(inputElement);
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!validatePage(2)) {
+                return;
+            }
+            
+            // Show loading indicator
+            loadingIndicator.style.display = 'block';
+            
+            // Collect all form data
+            const formData = new FormData(form);
+            let formDataObject = {};
+            
+            formData.forEach((value, key) => {
+                formDataObject[key] = value;
+            });
+            
+            // Add timestamp
+            formDataObject['timestamp'] = new Date().toISOString();
+            
+            // Add random question text for clarity in spreadsheet
+            selectedRandomQuestions.forEach((question, index) => {
+                formDataObject[`randomQuestion${index+1}`] = question.text;
+            });
+            
+            // Send data to Google Sheets
+            saveToGoogleSheets(formDataObject);
+        });
+        
+        // Function to save data to Google Sheets
+        function saveToGoogleSheets(data) {
+            $.ajax({
+                url: GOOGLE_SHEETS_ENDPOINT,
+                method: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function(response) {
+                    // Hide the form and loading indicator
+                    form.style.display = 'none';
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    
+                    // Reset form after 3 seconds and show first page again
+                    setTimeout(() => {
+                        form.reset();
+                        goToPage(0);
+                        form.style.display = 'block';
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                },
+                error: function(error) {
+                    // Hide loading indicator
+                    loadingIndicator.style.display = 'none';
+                    
+                    // Show error message
+                    errorMessage.style.display = 'block';
+                    
+                    // Hide error message after 3 seconds
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';
+                    }, 3000);
+                    
+                    console.error('Error submitting to Google Sheets', error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
